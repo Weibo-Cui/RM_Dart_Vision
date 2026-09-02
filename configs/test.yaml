@@ -1,0 +1,69 @@
+camera_name: "hikrobot"
+exposure_ms: 1.6
+gain: 10
+vid_pid: 2bdf:0001
+
+use_serial: false       # 是否使用串口下发给云台
+com_port: "/dev/rm_usb0"
+baud_rate: 115200
+
+source: video  # camera: 使用摄像头, video: 使用视频
+detector: tradition  # yolo: 使用神经网络识别, tradition: 使用OpenCV识别，rknn:使用rk3588 npu推理
+debug: true    # 开启可视化
+use_trackbar: false   # 开启opencv动态调参
+record: false  # 开启录制
+record_fps: 20  # 录制帧率
+
+pixel_compensation: 0.0  # 像素补偿 暂时用不到
+
+xml_path: "assets/Katrin.xml"
+bin_path: "assets/Katrin.bin"
+device: "CPU"
+rknn_path: "assets/green_rk3588_fp16.rknn"
+
+score_threshold: 0.8
+nms_threshold: 0.4
+
+# 跟踪器
+tracker:
+  tracking_thres: 10          # DETECTING->TRACKING连续命中帧数
+  lost_time_thres: 1.0       # TEMP_LOST 容忍秒,超时进入LOST
+  max_pixel_dis: 100         # 上次锁定中心到检测中心最大距离
+
+# opencv传统识别
+hsv:
+  h_min: 45          # 0-180
+  h_max: 75          # 0-180
+  s_min: 170          # 0-255
+  s_max: 255         #0-255
+  v_min: 180          #0-255
+  v_max: 255         #0-255
+
+morphology:
+  kernel_size: 5           
+  iterations: 2            #开闭运算次数
+  dilate_iterations: 2     #膨胀次数
+  erode_iterations: 0      #腐蚀次数
+
+contour_filter:
+  min_area: 600           
+  max_area: 3000          
+  min_aspect_ratio: 1.00    # 最小长宽比
+  max_aspect_ratio: 1.20    # 最大长宽比
+
+use_roi: false
+
+roi:           
+  x: 300                  
+  y: 200                   
+  width: 640               
+  height: 480              
+
+gaussian:
+  kernel_size: 5           # 高斯核
+  sigma: 1.5               # 高斯标准差
+
+video:
+  path: videos/test.mkv
+  keep_looping: true   # 视频循环播放
+  play_speed: 1.0  # 播放倍速   1.0 正常速度  0.5 半速  2.0 双倍速

@@ -1,0 +1,43 @@
+# docker compose up -d 运行构建容器
+# 使用 X11 转发时需主机需要先 xhost +local:root
+services:
+  rv_dart_:  # 服务名，可以随便起
+    build:
+        context: .             # 在当前目录下找构建上下文
+        dockerfile: Dockerfile # 指定 Dockerfile 的名字
+    image: woberr/qidian:dart_arm64v8_2
+    container_name: rv_dart_  # --name rv_dart_
+    
+    # 网络与权限
+    network_mode: host         # 镜像模式网络 --network host
+    privileged: true           # 给 root 权限 --privileged
+    
+    # 交互模式 (对应 -it)
+    stdin_open: true           # -i
+    tty: true                  # -t
+
+    # environment:
+      # 将宿主机的 DISPLAY 变量传给容器 (通常是 :0 或 :1)
+      # - DISPLAY=${DISPLAY}
+    # 挂载 (-v)
+    volumes:
+      # 核心：挂载 X11 Unix Socket 以实现 GUI 转发
+      # - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev:/dev # 直接挂载整个 /dev 目录，确保容器内能访问所有设备（如摄像头、串口等）
+      # 注意：在 Compose 中最好用 ${HOME} 替代 ~，它会自动获取你当前用户的家目录
+      #- ${HOME}/.ros:/root/.ros # 保存日志到宿主机
+      - ${HOME}/qd_2026_dart:/dart_ws  # 飞镖代码
+      - ${HOME}/.vscode-server/:/root/.vscode-server # 防止每次重建容器后 vscode 插件、服务器丢失
+
+    # 覆盖会崩溃的默认入口脚本
+    entrypoint: /bin/bash
+
+    # 启动命令 (对应最后那一串)
+    # 进终端
+    command: -c "sleep infinity"
+    # 自启动
+    # command: -c "source /dart_ws/dart_watch_dog.sh" 
+    
+    # 重启策略 (推荐加上，比如开机自启或崩溃重启)
+    restart: unless-stopped
+    working_dir: /dart_ws
