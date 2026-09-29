@@ -20,11 +20,13 @@ set(LIGHT_DETECT_SRC
     OpenvinoInfer.cpp
     Traditional.cpp
     RknnInfer.cpp
+    Tracker.cpp
+    VisionPipeline.cpp
 )
 
 add_library(light_detect OBJECT ${LIGHT_DETECT_SRC})
 
-target_link_libraries(light_detect openvino::runtime tools)
+target_link_libraries(light_detect openvino::runtime tools io)
 
 if(USE_RKNN)
     target_compile_definitions(light_detect PUBLIC USE_RKNN)

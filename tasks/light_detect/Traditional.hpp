@@ -25,6 +25,7 @@ public:
     int track_min_aspect_ratio_,track_max_aspect_ratio_;
     int track_morph_kernel_size_,track_dilate_iterations_,track_erode_iterations_;
     cv::Mat debug_birimg;
+    cv::Mat debug_roiimg;
     static void onTrackbarCallback(int value, void* userdata);
     void updateParameters();
     void createTrackbars(tools::WebViewer* viewer);

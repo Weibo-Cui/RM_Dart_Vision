@@ -51,15 +51,23 @@ TraditionalDetector::TraditionalDetector(const std::string &config_path) {
     morph_kernel_ = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(morph_kernel_size_, morph_kernel_size_));
 }
 
-std::vector<LightDetect::Light> TraditionalDetector::detect(cv::Mat &src, const cv::Size2d &dst_size, const int &my_color, const bool &startup) 
+std::vector<LightDetect::Light> TraditionalDetector::detect(cv::Mat &src, const cv::Size2d &dst_size, const int &my_color, const bool &startup)
 {
     if (src.empty()) return {};
-    cv::Size original_size = src.size();
+
+    cv::Mat resized;
+    cv::Size target_size(static_cast<int>(dst_size.width), static_cast<int>(dst_size.height));
+    if (src.size() != target_size) {
+        cv::resize(src, resized, target_size);
+    } else {
+        resized = src;
+    }
+    cv::Size original_size = resized.size();   // = dst_size，mapCoordinates scale=1.0
     cv::Rect roi_rect;
-    preprocess(src, processed_img,roi_rect);
-    colorSegmentation(processed_img,bir_img);
+    preprocess(resized, processed_img, roi_rect);
+    colorSegmentation(processed_img, bir_img);
     morphologyProcess(bir_img);
-    std::vector<Light> lights = findAndFilterContours(bir_img, roi_rect, dst_size, original_size);  
+    std::vector<Light> lights = findAndFilterContours(bir_img, roi_rect, dst_size, original_size);
     return lights;
 }
 
@@ -68,12 +76,14 @@ void TraditionalDetector::preprocess(const cv::Mat &src, cv::Mat &dst,cv::Rect &
         auto x = std::max(0, std::min(roi_x_, src.cols - 1));
         auto y = std::max(0, std::min(roi_y_, src.rows - 1));
         auto w = std::min(roi_width_, src.cols - x);
-        auto h = std::min(roi_height_, src.rows - y);      
+        auto h = std::min(roi_height_, src.rows - y);
         roi_rect = cv::Rect(x, y, w, h);
         cv::Mat roi_frame = src(roi_rect);
+        debug_roiimg = roi_frame.clone();   // 供可视化显示ROI裁剪图
         cv::GaussianBlur(roi_frame, dst, cv::Size(gaussian_kernel_size_, gaussian_kernel_size_), gaussian_sigma_);
     } else {
         roi_rect = cv::Rect(0, 0, src.cols, src.rows);
+        debug_roiimg = src;
         cv::GaussianBlur(src, dst, cv::Size(gaussian_kernel_size_, gaussian_kernel_size_), gaussian_sigma_);
     }
 }
@@ -137,18 +147,14 @@ std::vector<LightDetect::Light> TraditionalDetector::findAndFilterContours(const
     return result;
 }
 
-void TraditionalDetector::mapCoordinates(Light &light, const cv::Rect &roi_offset,const cv::Size2d &dst_size,const cv::Size &original_size) 
+void TraditionalDetector::mapCoordinates(Light &light, const cv::Rect &roi_offset,const cv::Size2d &dst_size,const cv::Size &original_size)
 {
-    //ROI坐标 → 原图坐标
-    light.center_point.x += roi_offset.x;
-    light.center_point.y += roi_offset.y;
-    light.box.x += roi_offset.x;
-    light.box.y += roi_offset.y;
-    
-    // 原图坐标 → 目标尺寸坐标
+    (void)roi_offset;
+
+    // 原图坐标 → 目标尺寸坐标（入口缩放后 original_size == dst_size，scale=1.0）
     double scale_x = dst_size.width / original_size.width;
     double scale_y = dst_size.height / original_size.height;
-    
+
     light.center_point.x *= scale_x;
     light.center_point.y *= scale_y;
     light.box.x *= scale_x;

@@ -1,14 +1,3 @@
-//
-// green light single-object tracker
-// created by cwb on 2026.7.30
-//
-// 设计目的:在多个绿灯检测框中锁定唯一目标身份,挡掉快速移动的绿色小圆球干扰,
-// 防止控制器被瞬时出现的小目标带着大幅转动。
-//
-// 本跟踪器只做"身份锁定 + 干扰过滤",不做卡尔曼/EKF 平滑:
-// 输出的中心/框直接来自当前帧匹配到的检测框原样数据,丢失期沿用最近一次匹配值。
-//
-
 #ifndef TRACKER__TRACKER_HPP
 #define TRACKER__TRACKER_HPP
 
@@ -30,7 +19,6 @@ public:
 
     struct TrackedTarget
     {
-        // 直接拷自匹配到的 Light,不做任何滤波加工
         cv::Rect2d box;
         cv::Point2f center_point;
         double score = 0.;

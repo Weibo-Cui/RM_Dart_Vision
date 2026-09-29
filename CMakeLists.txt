@@ -24,12 +24,11 @@ include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(tools)
 add_subdirectory(io)
 add_subdirectory(tasks/light_detect)
-add_subdirectory(tasks/tracker)
 
 
 ####################src###################
 add_executable(standard src/main.cpp)
 
 
-target_link_libraries(standard ${OpenCV_LIBS} fmt::fmt yaml-cpp  tools io light_detect tracker)
+target_link_libraries(standard ${OpenCV_LIBS} fmt::fmt yaml-cpp  tools io light_detect)
 
