@@ -16,7 +16,8 @@ namespace io
 class HikRobot : public CameraBase
 {
 public:
-  HikRobot(double exposure_ms, double gain, const std::string & vid_pid);
+  HikRobot(double exposure_ms, double gain, const std::string & vid_pid,
+           int camera_width = -1, int camera_height = -1);
   ~HikRobot() override;
   void read(cv::Mat & img, std::chrono::steady_clock::time_point & timestamp) override;
 
@@ -29,6 +30,8 @@ private:
 
   double exposure_us_;
   double gain_;
+  int camera_width_;
+  int camera_height_;
 
   std::thread daemon_thread_;
   std::atomic<bool> daemon_quit_;
@@ -46,6 +49,8 @@ private:
 
   void set_float_value(const std::string & name, double value);
   void set_enum_value(const std::string & name, unsigned int value);
+  void set_int_value(const std::string & name, int64_t value);
+  bool get_int_value(const std::string & name, int64_t & out);
 
   void set_vid_pid(const std::string & vid_pid);
   void reset_usb() const;

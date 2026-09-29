@@ -91,3 +91,27 @@ rsync -rlptzvP --delete \
 --exclude='videos' \
 ./ qidian@192.168.137.x:~/qd_2026_dart/
 ```
+### commit 规范
+
+- 提交信息应包含：类型 (Type)、描述 (Subject) 以及可选的 范围（scope）、正文 (Body) 和 脚注 (Footer)
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+- 常用类型 (Type)
+
+    | 类型 | 描述 |
+    | :--- | :--- | 
+    | **feat** | 新增功能 (feature) |
+    | **fix** | 修复 Bug |
+    | **docs** | 文档修改 (Documentation) | 
+    | **style** | 代码格式修改 (不影响逻辑，如空格、分号等) | 
+    | **refactor** | 代码重构 (既不是修复 Bug 也不是新增功能) | 
+    | **perf** | 性能优化 (Performance) | 
+    | **test** | 增加或修改测试用例 | 
+    | **chore** | 构建过程、辅助工具或依赖库的变动 | 

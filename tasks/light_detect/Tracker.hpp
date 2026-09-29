@@ -1,5 +1,5 @@
-#ifndef TRACKER__TRACKER_HPP
-#define TRACKER__TRACKER_HPP
+#ifndef TRACKER_HPP
+#define TRACKER_HPP
 
 #include <chrono>
 #include <vector>

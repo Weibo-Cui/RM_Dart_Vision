@@ -72,13 +72,13 @@ public:
         std::string state_str = cv::format("%s", GreenLightTracker::stateStr(tgt.state));
         cv::putText(display_img, state_str, cv::Point(10, 55), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 255), 2);
 
-        // Latency(ms) 右上角
+        // Latency(ms)
         std::string lat_str = cv::format("Latency: %.1f ms", latency_ms);
         int baseLine = 0;
         cv::Size ts = cv::getTextSize(lat_str, cv::FONT_HERSHEY_SIMPLEX, 0.6, 2, &baseLine);
         cv::putText(display_img, lat_str,
                     cv::Point(display_img.cols - ts.width - 10, ts.height + 10),
-                    cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 255, 255), 2);
+                    cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 255, 255), 2);
 
         // 中线（画布中心）
         cv::line(display_img, cv::Point(kCanvasW / 2, 0), cv::Point(kCanvasW / 2, kCanvasH), cv::Scalar(0, 0, 255), 2);

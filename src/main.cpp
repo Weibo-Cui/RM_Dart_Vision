@@ -38,7 +38,7 @@ int main() {
                 }
             }
 
-            int key = viz.waitKey(5);
+            int key = viz.waitKey(1);
             if (key == 'q' || key == 27) {   // q或ESC退出
                 break;
             }
